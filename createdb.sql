@@ -13,3 +13,9 @@ CREATE TABLE IF NOT EXISTS Tinkoff (
     success BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (userId) REFERENCES Users (id)
 ) ENGINE=INNODB;
+
+
+SELECT COUNT(*), COUNT(*)*100/(SELECT COUNT(*) FROM test_query)
+FROM test_query
+WHERE partnerSteamid64 = 4 AND state = 'Accept'
+AND time between '2019-06-19 14:00' and '2019-06-19 15:00';

@@ -12,8 +12,10 @@ def is_success(status_code: int) -> bool:
     return 200 <= status_code <= 299
 
 
-def get_token(amount: int, order_id: int):
-    raw_string = f"{amount}{order_id}{settings.TINKOFF_PASSWORD}{settings.TINKOFF_TERMINAL_KEY}"
+def get_token(data: dict) -> str:
+    data["Password"] = settings.TINKOFF_PASSWORD
+    data = dict(sorted(data.items()))
+    raw_string = "".join(data.values())
     return hashlib.sha256(raw_string.encode("utf-8")).hexdigest()
 
 
@@ -36,8 +38,8 @@ def payment_success(amount: int, payment_id: int, tinkoff_payment_id: int) -> bo
     data = {
         "TerminalKey": settings.TINKOFF_TERMINAL_KEY,
         "PaymentId": str(tinkoff_payment_id),
-        "Token": get_token(amount, payment_id),
     }
+    data["Token"] = get_token(data.copy())
     response = requests.post(GET_STATE_URL, json=data)
 
     if is_success(response.status_code):
