@@ -13,7 +13,7 @@ def is_success(status_code: int) -> bool:
 
 
 def get_token(data: dict) -> str:
-    data["Password"] = settings.TINKOFF_PASSWORD
+    data = dict(**data, Password=settings.TINKOFF_PASSWORD)
     data = dict(sorted(data.items()))
     raw_string = "".join(data.values())
     return hashlib.sha256(raw_string.encode("utf-8")).hexdigest()
@@ -34,12 +34,12 @@ def init(amount: int, payment_id: int) -> tuple:
     return data["PaymentId"], data["PaymentURL"]
 
 
-def payment_success(amount: int, payment_id: int, tinkoff_payment_id: int) -> bool:
+def payment_success(tinkoff_payment_id: int) -> bool:
     data = {
         "TerminalKey": settings.TINKOFF_TERMINAL_KEY,
         "PaymentId": str(tinkoff_payment_id),
     }
-    data["Token"] = get_token(data.copy())
+    data["Token"] = get_token(data)
     response = requests.post(GET_STATE_URL, json=data)
 
     if is_success(response.status_code):

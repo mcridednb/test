@@ -116,7 +116,7 @@ class State(Resource):
             return {"success": False, "error": "Failed to get payment details from db", "detail": str(e)}, 500
 
         try:
-            success = tinkoff.payment_success(amount, payment_id, tinkoff_payment_id)
+            success = tinkoff.payment_success(tinkoff_payment_id)
         except Exception as e:
             return {"success": False, "error": "Failed to get payment details from tinkoff", "detail": str(e)}, 500
 
