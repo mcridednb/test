@@ -104,12 +104,10 @@ class State(Resource):
         return user_id, amount, tinkoff_payment_id
 
     @staticmethod
-    def _add_balance(amount: int, user_id: int) -> tuple:
+    def _add_balance(amount: int, user_id: int) -> None:
         with closing(mysql.connection.cursor()) as cursor:
             cursor.execute(f"UPDATE Users SET balance = (balance + {amount}) WHERE id = {user_id}")
-            amount, tinkoff_payment_id = cursor.fetchone()[0]
-
-        return amount, tinkoff_payment_id
+            mysql.connection.commit()
 
     def get(self, payment_id: int):
         try:
